@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email</title>
+    <link rel="icon" href="../../images/Phluowise_Business_icon.svg" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body class="bg-[#121212] text-white flex justify-center items-center h-screen"><style>
+        body {
+  font-family: 'Inter', sans-serif;
+}
+    </style>
+    <div class="bg-[#1a1a1a] border-gray-700 p-6 rounded-lg shadow-lg w-full max-w-sm text-center">
+        <h2 class="text-lg font-semibold mb-3">Verify Your Email</h2>
+        <div class="flex justify-center items-center mb-4">
+            <div class="bg-gray-700 p-4 rounded-full">
+                <i class="fas fa-envelope text-2xl"></i>
+            </div>
+        </div>
+        <p class="text-gray-400">We sent you a code.</p>
+        <p class="text-sm text-blue-400" id="userEmail"></p>
+        <p class="text-xs text-gray-500 mb-4">Enter the verification code</p>
+        <p id="emailStatus" class="text-yellow-500 text-sm mb-2">⏳ Waiting for email...</p>
+        <form id="verificationForm">
+            <div class="flex justify-center gap-2 mb-4">
+                <input type="text" class="otp-field w-12 h-14 text-center text-2xl bg-gray-800 border border-gray-700 rounded-md focus:ring-blue-500" maxlength="1">
+                <input type="text" class="otp-field w-12 h-14 text-center text-2xl bg-gray-800 border border-gray-700 rounded-md focus:ring-blue-500" maxlength="1">
+                <input type="text" class="otp-field w-12 h-14 text-center text-2xl bg-gray-800 border border-gray-700 rounded-md focus:ring-blue-500" maxlength="1">
+                <input type="text" class="otp-field w-12 h-14 text-center text-2xl bg-gray-800 border border-gray-700 rounded-md focus:ring-blue-500" maxlength="1">
+            </div>
+            <p id="errorMessage" class="text-red-500 text-sm hidden"></p>
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Verify</button>
+        </form>
+        <p class="text-sm text-gray-400 mt-4">
+            <button id="resendCode" class="text-blue-400 hidden">Resend Code</button>
+        </p>
+        <p id="resendMessage" class="text-green-500 text-sm hidden mt-2"></p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            checkEmailStatus();
+            handleOtpInput();
+        });
+
+        function checkEmailStatus() {
+    fetch("../back/email-handler.php?action=check_status")
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Debugging log
+
+            const emailStatus = document.getElementById("emailStatus");
+            const resendCode = document.getElementById("resendCode");
+
+            if (data.success && data.status === "sent") {
+                emailStatus.innerHTML = "✅ Email Sent! Enter your OTP";
+                emailStatus.classList.remove("text-yellow-500");
+                emailStatus.classList.add("text-green-500");
+                resendCode.classList.remove("hidden");
+            } else {
+                setTimeout(checkEmailStatus, 3000); // Keep checking every 3s
+            }
+        })
+        .catch(error => console.error("Error checking email status:", error)); // Only one catch is needed
+}
+
+
+
+        function handleOtpInput() {
+            const otpFields = document.querySelectorAll(".otp-field");
+            otpFields.forEach((field, index) => {
+                field.addEventListener("input", (e) => {
+                    if (e.target.value.length === 1 && index < otpFields.length - 1) {
+                        otpFields[index + 1].focus();
+                    }
+                });
+                field.addEventListener("keydown", (e) => {
+                    if (e.key === "Backspace" && index > 0 && !field.value) {
+                        otpFields[index - 1].focus();
+                    }
+                });
+            });
+        }
+
+        document.getElementById("verificationForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            let otp = "";
+            document.querySelectorAll(".otp-field").forEach(input => {
+                otp += input.value;
+            });
+            fetch("../back/verify-otp.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "otp=" + encodeURIComponent(otp)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Verification Successful!",
+                        text: "Redirecting to login...",
+                        timer: 2000
+                    }).then(() => {
+                        window.location.href = "user-signin.php";
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Verification Failed!",
+                        text: data.message
+                    });
+                }
+            })
+            .catch(error => console.error("Error verifying OTP:", error));
+        });
+
+        document.getElementById("resendCode").addEventListener("click", function () {
+            fetch("../back/email-handler.php?action=resend_otp", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    const resendMessage = document.getElementById("resendMessage");
+                    resendMessage.innerText = data.success ? "🔄 A new OTP has been sent to your email." : data.message;
+                    resendMessage.classList.remove("hidden");
+                    resendMessage.classList.add(data.success ? "text-green-500" : "text-red-500");
+                })
+                .catch(error => console.error("Error resending OTP:", error));
+        });
+    </script>
+</body>
+</html>

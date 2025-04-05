@@ -1,0 +1,400 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Customer Transactions</title>
+    <link rel="icon" href="../../images/Phluowise_Business_icon.svg" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <style>
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("searchInput");
+            const tableRows = document.querySelectorAll("tbody tr");
+            const headerCheckbox = document.getElementById("headerCheckbox");
+            const rowCheckboxes = document.querySelectorAll(".rowCheckbox");
+
+            searchInput.addEventListener("input", function () {
+                const searchTerm = searchInput.value.toLowerCase();
+
+                tableRows.forEach((row) => {
+                    const rowText = row.innerText.toLowerCase();
+                    if (rowText.includes(searchTerm)) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+
+            headerCheckbox.addEventListener("change", function () {
+                const isChecked = headerCheckbox.checked;
+                rowCheckboxes.forEach((checkbox) => {
+                    checkbox.checked = isChecked;
+                });
+            });
+        });
+    </script>
+</head>
+
+<body class="bg-black text-white p-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h1 class="text-xl font-semibold">Selected staff name</h1>
+                <p class="text-sm text-gray-400">
+                    Manage staff and their account details, permissions, etc here.
+                </p>
+            </div>
+            <button
+                class="glassmorphism bg-blue-600 text-white px-4 py-2 pt-1 pb-1 rounded-md shadow-md hover:bg-blue-700">
+                export data (eg: csv, pdf)
+            </button>
+        </div>
+        <div class="mb-4">
+            <input
+                class="glassmorphism w-full px-4 py-2 rounded-md text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                id="searchInput" placeholder="Search..." type="text" />
+        </div>
+        <div class="overflow-x-auto glassmorphism shadow-md rounded-lg fade-in">
+            <table class="min-w-full divide-y divide-gray-700">
+                <thead class="bg-[#F5F5F51A]">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+                            <input id="headerCheckbox"
+                                class="glassmorphism form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                                type="checkbox" />
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            ID
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Image
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Name
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Location
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Transaction Status
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Time
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Date
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Amount received
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Amount to Phluowise
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Account Type
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-zinc-900 divide-y divide-gray-700">
+                    <tr class="hover:bg-black transition duration-150 ease-in-out">
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <input
+                                class="glassmorphism form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out rowCheckbox"
+                                type="checkbox" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            1
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <img alt="Profile picture of Olivia Rhy" class="h-10 w-10 rounded-full" height="40"
+                                src="https://storage.googleapis.com/a1aa/image/93ezl6AX5kDHDsqrNY5oRqbU_I02EcfNlNccyfMzAUw.jpg"
+                                width="40" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <div class="text-sm font-medium">Olivia Rhy</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            New York
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full  text-green-500">
+                                Payment Successful
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            3:00 pm
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Monday, Feb
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            $100
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Mobile Money: MTN
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-black transition duration-150 ease-in-out">
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <input
+                                class="glassmorphism form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out rowCheckbox"
+                                type="checkbox" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            2
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <img alt="Profile picture of Phoenix B" class="h-10 w-10 rounded-full" height="40"
+                                src="https://storage.googleapis.com/a1aa/image/-yQwIBraAC_Gx5nnvl21e6XeoS3GTCt3bHgEHQJq7To.jpg"
+                                width="40" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <div class="text-sm font-medium">Phoenix B</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Los Angeles
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full   text-green-500">
+                                Payment Successful
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            3:00 pm
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Monday, Feb
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            $150
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Cash
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-black transition duration-150 ease-in-out">
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <input
+                                class="glassmorphism form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out rowCheckbox"
+                                type="checkbox" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            3
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <img alt="Profile picture of Lana Steir" class="h-10 w-10 rounded-full" height="40"
+                                src="https://storage.googleapis.com/a1aa/image/nzDHEkwas5GYEgJVn5dPO6Bu-RSXa-HOOqIxACCiA5M.jpg"
+                                width="40" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <div class="text-sm font-medium">Lana Steir</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Chicago
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full   text-green-500">
+                                Payment Successful
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            3:00 pm
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Monday, Feb
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            $200
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Mobile Money: AirtelTigo
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-black transition duration-150 ease-in-out">
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <input
+                                class="glassmorphism form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out rowCheckbox"
+                                type="checkbox" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            4
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <img alt="Profile picture of Demi Wilk" class="h-10 w-10 rounded-full" height="40"
+                                src="https://storage.googleapis.com/a1aa/image/X63uC13NYJjuph9WeYThTnR3fdK03ON2hxm3sR0tm84.jpg"
+                                width="40" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <div class="text-sm font-medium">Demi Wilk</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Houston
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full   text-green-500">
+                                Payment Successful
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            3:00 pm
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Monday, Feb
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            $250
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Mobile Money: Telecel
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-black transition duration-150 ease-in-out">
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <input
+                                class="glassmorphism form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out rowCheckbox"
+                                type="checkbox" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            5
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <img alt="Profile picture of Candice V" class="h-10 w-10 rounded-full" height="40"
+                                src="https://storage.googleapis.com/a1aa/image/XaA8VIJsk4Bt2QSqNgDAZqI1TlJ-0hrawDZM0kibFD0.jpg"
+                                width="40" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <div class="text-sm font-medium">Candice V</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Phoenix
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full   text-green-500">
+                                Payment Successful
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            3:00 pm
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Monday, Feb
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            $300
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Cash
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-black transition duration-150 ease-in-out">
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <input
+                                class="glassmorphism form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out rowCheckbox"
+                                type="checkbox" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            6
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <img alt="Profile picture of Natali Cra" class="h-10 w-10 rounded-full" height="40"
+                                src="https://storage.googleapis.com/a1aa/image/GZE3a_rxO5pftbwOQ-KhUZ8dZfkBqjzjWTJhd84LCxc.jpg"
+                                width="40" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <div class="text-sm font-medium">Natali Cra</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Philadelphia
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full   text-green-500">
+                                Payment Successful
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            3:00 pm
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Monday, Feb
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            $350
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Mobile Money: MTN
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-black transition duration-150 ease-in-out">
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <input
+                                class="glassmorphism form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out rowCheckbox"
+                                type="checkbox" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            7
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <img alt="Profile picture of Drew Can" class="h-10 w-10 rounded-full" height="40"
+                                src="https://storage.googleapis.com/a1aa/image/J1hpUIdXvuh4MOskmbQfcejqZT9mPmF7Hy1yIXz3mBI.jpg"
+                                width="40" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <div class="text-sm font-medium">Drew Can</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            San Antonio
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap">
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full   text-green-500">
+                                Payment Successful
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            3:00 pm
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Monday, Feb
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            $350
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm text-gray-400">
+                            Cash
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

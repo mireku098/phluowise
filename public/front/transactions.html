@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions Page</title>
+    <link rel="icon" href="../../images/Phluowise_Business_icon.svg" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <!-- Add Alpine.js (if not already included) -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-black text-white">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <div class="flex">
+        <!-- Sidebar -->
+        <div id="sidebar">
+            <script>
+                fetch("sidebar.html")
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById("sidebar").innerHTML = data;
+                        highlightActivePage();
+                    });
+
+                function highlightActivePage() {
+                    const currentPage = window.location.pathname.split("/").pop().replace(".html", "").toLowerCase();
+
+                    document.querySelectorAll(".menu-item").forEach(item => {
+                        const page = item.getAttribute("data-page");
+                        if (page === currentPage) {
+                            item.classList.add("text-blue-400", "font-bold");
+                            item.querySelector(".selection-indicator")?.classList.remove("hidden");
+                        }
+                    });
+                }
+            </script>
+        </div>
+        <!-- Main Content -->
+        <div class="ml-64 p-5 w-full text-white">
+            <!-- Top Bar -->
+            <div id="topbar">
+                <script>
+                    fetch("topbar.html")
+                        .then(response => response.text())
+                        .then(data => {
+                            document.getElementById("topbar").innerHTML = data;
+                        });
+                </script>
+            </div>
+            <!-- Main Content Area -->
+            <div class="container mx-auto p-4">
+                <!-- Navigation Tabs -->
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <button class="px-4 py-2 bg-blue-900 hover:bg-gray-900 rounded"
+                        onclick="showTab('your_transactions')">Your Transactions</button>
+                    <button class="px-4 py-2 bg-gray-800 hover:bg-gray-900 rounded"
+                        onclick="showTab('delivered_to_phluowise')">Delivered to Phluowise</button>
+                </div>
+
+                <!-- Transactions Content -->
+                <div id="your_transactions" class="tab-content">
+                    <div id="yourTransactionsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    </div>
+                </div>
+
+                <div id="delivered_to_phluowise" class="tab-content hidden">
+                    <div id="deliveredToPhluowiseContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+                </div>
+            </div>
+
+            <script>
+                function showTab(tabId) {
+                    // Hide all tab contents
+                    const tabContents = document.querySelectorAll('.tab-content');
+                    tabContents.forEach(content => content.style.display = 'none');
+
+                    // Show the selected tab content
+                    const selectedContent = document.getElementById(tabId);
+                    if (selectedContent) {
+                        selectedContent.style.display = 'block';
+                    }
+
+                    // Update the active button's styles
+                    const tabButtons = document.querySelectorAll('button[onclick^="showTab"]');
+                    tabButtons.forEach(button => {
+                        button.classList.remove('bg-blue-900');
+                        button.classList.add('bg-gray-800');
+                    });
+
+                    // Highlight the active button
+                    const activeButton = Array.from(tabButtons).find(button => button.getAttribute('onclick').includes(tabId));
+                    if (activeButton) {
+                        activeButton.classList.add('bg-blue-900');
+                        activeButton.classList.remove('bg-gray-800');
+                    }
+                }
+
+                // Function to fetch and display transactions
+                async function loadTransactions() {
+                    try {
+                        const response = await fetch('transactions.json');
+                        const data = await response.json();
+                        const transactions = data.transactions;
+
+                        const yourTransactionsContainer = document.getElementById('yourTransactionsContainer');
+                        const deliveredToPhluowiseContainer = document.getElementById('deliveredToPhluowiseContainer');
+
+                        // Clear previous data
+                        yourTransactionsContainer.innerHTML = '';
+                        deliveredToPhluowiseContainer.innerHTML = '';
+
+                        // Loop through transactions and append to the correct container
+                        transactions.forEach(transaction => {
+                            const transactionCard = `
+                        <div class="bg-[#F5F5F51A] p-4 rounded-lg border border-gray-800 flex items-center justify-between">
+                            <div class="flex items-center">
+                                <img alt="Image of Driver" class="rounded-full mr-4" height="50" src="${transaction.image}" width="50" />
+                                <div>
+                                    <div>${transaction.name}</div>
+                                    <div class="text-green-500">${transaction.status}</div>
+                                    <div class="text-sm">${transaction.date}</div>
+                                    <div class="text-gray-500 text-sm">${transaction.paymentMethod}</div>
+                                    <div class="text-gray-500 ">${transaction.phlouwise}</div>
+                                </div>
+                            </div>
+                            <div class="text-white">GH₵${transaction.amount}</div>
+                        </div>
+                    `;
+
+                            if (transaction.type === 'your_transactions') {
+                                yourTransactionsContainer.innerHTML += transactionCard;
+                            } else if (transaction.type === 'delivered_to_phluowise') {
+                                deliveredToPhluowiseContainer.innerHTML += transactionCard;
+                            }
+                        });
+                    } catch (error) {
+                        console.error("Error loading transactions:", error);
+                    }
+                }
+
+                // Load transactions when the page loads
+                window.onload = loadTransactions;
+            </script>
+
+
+            <!-- end of content -->
+        </div>
+
+
+
+    </div>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // Show the selected tab content
+            const selectedContent = document.getElementById(tabId);
+            if (selectedContent) {
+                selectedContent.style.display = 'block';
+            }
+
+            // Update the active button's styles
+            const tabButtons = document.querySelectorAll('button[onclick^="showTab"]');
+            tabButtons.forEach(button => {
+                button.classList.remove('bg-yellow-300');
+                button.classList.add('bg-gray-800');
+            });
+
+            // Highlight the active button
+            const activeButton = Array.from(tabButtons).find(button => button.getAttribute('onclick').includes(tabId));
+            if (activeButton) {
+                activeButton.classList.add('bg-blue-900');
+                activeButton.classList.remove('bg-gray-800');
+            }
+
+            // Remove blur effect from all tabs
+            tabContents.forEach(content => content.classList.remove('blur-sm'));
+        }
+    </script>
+</body>
+
+</html>
