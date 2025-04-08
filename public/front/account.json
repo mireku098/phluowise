@@ -1,0 +1,24 @@
+{
+    "transactions": [
+      { "month": "Jan", "amount": 360 },
+      { "month": "Feb", "amount": 400 },
+      { "month": "Mar", "amount": 480 },
+      { "month": "Apr", "amount": 380 },
+      { "month": "May", "amount": 300 },
+      { "month": "Jun", "amount": 380 },
+      { "month": "Jul", "amount": 400 },
+      { "month": "Aug", "amount": 640 },
+      { "month": "Sep", "amount": 100 },
+      { "month": "Oct", "amount": 420 },
+      { "month": "Nov", "amount": 340 },
+      { "month": "Dec", "amount": 460 }
+    ],
+    "withdrawalSettings": {
+      "method": "automatic",
+      "isSet": true,
+      "accountInfo": {
+        "name": "Primary Account",
+        "lastFour": "1234"
+      }
+    }
+  }

@@ -1,132 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="../../images/Phluowise_Business_icon.svg" type="image/x-icon">
-    <title>Template Page</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <!-- Add Alpine.js (if not already included) -->
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-    <!-- Flatpickr CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
-    <!-- Flatpickr JS -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Monthly Transactions</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: #f4f4f4;
+    }
+    canvas {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+  </style>
 </head>
+<body>
+  <h2>Transaction Amounts per Month</h2>
+  <canvas id="transactionsChart" width="600" height="400"></canvas>
 
-<body class="bg-black text-white">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
-    <div class="flex">
-        <!-- Sidebar -->
-        <div id="sidebar">
-            <script>
-                fetch("sidebar.html")
-                    .then(response => response.text())
-                    .then(data => {
-                        document.getElementById("sidebar").innerHTML = data;
-                        highlightActivePage();
-                    });
+  <script>
+    async function loadTransactionData() {
+      try {
+        const response = await fetch('account.json');
+        const data = await response.json();
 
-                function highlightActivePage() {
-                    const currentPage = window.location.pathname.split("/").pop().replace(".html", "").toLowerCase();
+        const monthlyTotals = {};
 
-                    document.querySelectorAll(".menu-item").forEach(item => {
-                        const page = item.getAttribute("data-page");
-                        if (page === currentPage) {
-                            item.classList.add("text-blue-400", "font-bold");
-                            item.querySelector(".selection-indicator")?.classList.remove("hidden");
-                        }
-                    });
-                }
-            </script>
-        </div>
-        <!-- Main Content -->
-        <div class="ml-64 p-5 w-full text-white">
-            <!-- Top Bar -->
-            <div id="topbar">
-                <script>
-                    fetch("topbar.html")
-                        .then(response => response.text())
-                        .then(data => {
-                            document.getElementById("topbar").innerHTML = data;
-                        });
-                </script>
-            </div>
-            <!-- Main Content Area -->
-            <div class="container mx-auto p-4">
-                <!-- write the content of the page here -->
-                <div class="container mx-auto flex flex-col items-center justify-center bg-black text-white p-6">
+        data.forEach(item => {
+          const date = new Date(item.date);
+          const month = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+          if (!monthlyTotals[month]) {
+            monthlyTotals[month] = 0;
+          }
+          monthlyTotals[month] += item.amount;
+        });
 
-                    <!-- Date Picker -->
-                    <div class="bg-[#181A19E5] p-4 rounded-lg w-full max-w-md shadow-lg">
-                        <label for="datePicker" class="block text-sm font-medium text-gray-300 mb-2">Select
-                            Date:</label>
-                        <input type="text" id="datePicker"
-                            class="w-full bg-[#323741] border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Pick a date">
-                    </div>
+        const sortedMonths = Object.keys(monthlyTotals).sort((a, b) => {
+          return new Date(a) - new Date(b);
+        });
 
-                    <!-- Time Picker -->
-                    <div class="bg-[#181A19E5] p-4 mt-4 rounded-lg w-full max-w-md shadow-lg">
-                        <label for="timePicker" class="block text-sm font-medium text-gray-300 mb-2">Select
-                            Time:</label>
-                        <input type="text" id="timePicker"
-                            class="w-full bg-[#323741] border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Pick a time">
-                    </div>
+        const amounts = sortedMonths.map(month => monthlyTotals[month]);
 
-                    <!-- Additional Info -->
-                    <div class="bg-[#181A19E5] p-4 mt-4 rounded-lg w-full max-w-md shadow-lg">
-                        <label for="additionalInfo" class="block text-sm font-medium text-gray-300 mb-2">Add Additional
-                            Information:</label>
-                        <textarea id="additionalInfo" rows="3"
-                            class="w-full bg-[#323741] border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Type here..."></textarea>
-                    </div>
+        const ctx = document.getElementById('transactionsChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: sortedMonths,
+            datasets: [{
+              label: 'Total Amount',
+              data: amounts,
+              backgroundColor: 'rgba(54, 162, 235, 0.6)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: true },
+              tooltip: { mode: 'index', intersect: false }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'Month' }
+              },
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: 'Total Amount' }
+              }
+            }
+          }
+        });
 
-                    <!-- Buttons -->
-                    <div class="flex gap-4 mt-4">
-                        <button class="bg-blue-700 hover:bg-blue-600 text-white px-6 py-2 rounded-lg">Send To
-                            Customer</button>
-                        <!-- <button class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">Authorize Pickup</button> -->
-                    </div>
-                </div>
-                <script>
-                    // Initialize Flatpickr for Date Picker
-                    flatpickr("#datePicker", {
-                        dateFormat: "l, F j, Y", // Example: Wednesday, January 1, 2023
-                        defaultDate: new Date(),
-                        disableMobile: true,
-                    });
+      } catch (err) {
+        console.error("Error loading data:", err);
+      }
+    }
 
-                    // Initialize Flatpickr for Time Picker
-                    flatpickr("#timePicker", {
-                        enableTime: true,
-                        noCalendar: true,
-                        dateFormat: "h:i K", // Example: 06:30 PM
-                        defaultDate: "12:00 PM",
-                    });
-                </script>
- <link rel="stylesheet" href="calender.css">
-
-
-                <!-- end of page -->
-            </div>
-            <!-- end of content -->
-        </div>
-    </div>
-    </div>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> -->
-   
+    loadTransactionData();
+  </script>
 </body>
-
 </html>
