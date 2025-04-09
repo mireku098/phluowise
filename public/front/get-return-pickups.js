@@ -3,16 +3,19 @@ let ordersData = [];
 let selectedOrderIndex = -1;
 
 // Load orders from localStorage or JSON file
+// Load orders from JSON file
 async function loadOrders() {
   try {
-    const savedData = localStorage.getItem("ordersData");
-    if (savedData) {
-      ordersData = JSON.parse(savedData);
-    } else {
-      const response = await fetch("orders.json");
-      const data = await response.json();
-      ordersData = data.orders;
-    }
+    // Commented out localStorage logic
+    // const savedData = localStorage.getItem("ordersData");
+    // if (savedData) {
+    //   ordersData = JSON.parse(savedData);
+    // } else {
+    const response = await fetch("get_return_pickups.json"); // or your API endpoint
+    const data = await response.json();
+    ordersData = data.orders;
+    // }
+
     renderOrders();
   } catch (error) {
     console.error("Error loading orders:", error);
@@ -43,7 +46,9 @@ function createOrderCard(order, index) {
       <div class="flex">
         <div class="mr-4">
           <div class="w-16 h-16 bg-blue-100 rounded-md flex items-center justify-center">
-            <img src="${order.image}" alt="Water bottle" class="w-12 h-12 text-blue-500">
+            <img src="${
+              order.image
+            }" alt="Water bottle" class="w-12 h-12 text-blue-500">
           </div>
           <p class="text-white text-center text-xs mt-1">${order.size}</p>
         </div>
@@ -56,7 +61,9 @@ function createOrderCard(order, index) {
               ? `
             <div class="mt-2">
               <p class="text-gray-400 text-xs font-semibold">Scheduled Pickup:</p>
-              <p class="text-gray-400 text-xs">${order.pickupDate} at ${order.pickupTime}</p>
+              <p class="text-gray-400 text-xs">${order.pickupDate} at ${
+                  order.pickupTime
+                }</p>
               ${
                 order.additionalInfo
                   ? `<p class="text-gray-400 text-xs mt-1">${order.additionalInfo}</p>`
@@ -70,8 +77,12 @@ function createOrderCard(order, index) {
             </div>`
           }
           <div class="flex gap-2 mt-2">
-            <span class="bg-green-900 text-white text-xs rounded px-2 py-1">${order.price}</span>
-            <span class="bg-zinc-800 text-white text-xs rounded px-2 py-1">${order.type}</span>
+            <span class="bg-green-900 text-white text-xs rounded px-2 py-1">${
+              order.price
+            }</span>
+            <span class="bg-zinc-800 text-white text-xs rounded px-2 py-1">${
+              order.type
+            }</span>
           </div>
         </div>
 
@@ -104,12 +115,20 @@ function createOrderCard(order, index) {
 
 // Tab management
 function showTab(tabId) {
-  document.querySelectorAll(".tab-content").forEach(tab => tab.classList.add("hidden"));
+  document
+    .querySelectorAll(".tab-content")
+    .forEach((tab) => tab.classList.add("hidden"));
   document.getElementById(tabId).classList.remove("hidden");
 
-  document.querySelectorAll(".tab-button").forEach(btn => {
-    btn.classList.toggle("bg-blue-900", btn.getAttribute("onclick").includes(tabId));
-    btn.classList.toggle("bg-gray-800", !btn.getAttribute("onclick").includes(tabId));
+  document.querySelectorAll(".tab-button").forEach((btn) => {
+    btn.classList.toggle(
+      "bg-blue-900",
+      btn.getAttribute("onclick").includes(tabId)
+    );
+    btn.classList.toggle(
+      "bg-gray-800",
+      !btn.getAttribute("onclick").includes(tabId)
+    );
   });
 }
 
@@ -148,12 +167,12 @@ function closePickupModal() {
 function savePickupDetails() {
   const date = document.getElementById("datePicker").value;
   const time = document.getElementById("timePicker").value;
-  
+
   if (selectedOrderIndex === -1) {
     alert("Error: No order selected. Please start over.");
     return;
   }
-  
+
   if (!date || !time) {
     alert("Please select both date and time");
     return;
@@ -165,18 +184,27 @@ function savePickupDetails() {
     status: "accepted",
     pickupDate: date,
     pickupTime: time,
-    additionalInfo: document.getElementById("additionalInfo").value
+    additionalInfo: document.getElementById("additionalInfo").value,
   };
 
-  // Save to localStorage
-  localStorage.setItem("ordersData", JSON.stringify(ordersData));
+  // Commented out saving to localStorage
+  // localStorage.setItem("ordersData", JSON.stringify(ordersData));
+
+  // TODO: Replace with API call or file write function
+  // async function saveOrdersToAPI(ordersData) {
+  //   await fetch("your-api-endpoint", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify(ordersData)
+  //   });
+  // }
 
   // Update UI
   closePickupModal();
   renderOrders();
   showTab("accepted");
   alert("Pickup scheduled successfully!");
-  
+
   // Reset selection
   selectedOrderIndex = -1;
 }
@@ -186,19 +214,19 @@ function initPickers() {
   flatpickr("#datePicker", {
     dateFormat: "l, F j, Y",
     defaultDate: new Date(),
-    disableMobile: true
+    disableMobile: true,
   });
 
   flatpickr("#timePicker", {
     enableTime: true,
     noCalendar: true,
     dateFormat: "h:i K",
-    defaultDate: "12:00 PM"
+    defaultDate: "12:00 PM",
   });
 }
 
 // Initialize the application
-window.onload = function() {
+window.onload = function () {
   initPickers();
   loadOrders();
   showTab("pending");
