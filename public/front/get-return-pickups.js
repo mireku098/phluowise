@@ -55,7 +55,7 @@ function createOrderCard(order, index) {
 
         <div class="flex-1">
           <p class="text-white font-medium">${order.user}</p>
-          <p class="text-gray-400 text-sm">${order.location}</p>
+        
           ${
             order.status === "accepted" && order.pickupDate
               ? `
@@ -66,7 +66,7 @@ function createOrderCard(order, index) {
                 }</p>
               ${
                 order.additionalInfo
-                  ? `<p class="text-gray-400 text-xs mt-1">${order.additionalInfo}</p>`
+                  ? `<p class="text-gray-200 text-xs mt-1">${order.additionalInfo}</p>`
                   : ""
               }
             </div>`
@@ -88,12 +88,9 @@ function createOrderCard(order, index) {
 
         <div class="flex flex-col items-center ml-2">
           <div class="w-8 h-8 bg-zinc-800 rounded-full flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-          </div>
-          <p class="text-white text-xs mt-1 text-center">view<br>location</p>
+                            <img src="../../images/location.svg" alt="">
+                          </div>
+          <p class="text-white text-xs mt-1 text-center">${order.location}</p>
         </div>
       </div>
 

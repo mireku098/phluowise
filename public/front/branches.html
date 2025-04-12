@@ -8,6 +8,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <!-- Include Alpine.js -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
+      
+        if (!isLoggedIn) {
+          window.location.href = "user-signin.html"; // Redirect if not authenticated
+        }
+      
+        const role = localStorage.getItem("userRole");
+      
+        if (role !== "admin") {
+          swal("Access Denied", "This page is for Admins only.", "error").then(() => {
+            // Optional: You can redirect them back to a common page like dashboard or home
+            // window.location.href = "dashboard.html";
+          });
+        }
+      </script>
+
 </head>
 
 <body class="bg-black flex items-center justify-center min-h-screen p-4">
@@ -33,7 +50,7 @@
         <div x-data="{ toggle1: true }" class="bg-[#060606B2] p-4 rounded-lg mb-6">
             <div class="flex items-center ">
                 <div class="flex mb-10 mr-3 ">
-                    <img alt="Branch icon" class="mr-2 " height="24" src="../../images//shop.png" width="24" />
+                    <img alt="Branch icon" class="mr-2 " height="24" src="../images//shop.png" width="24" />
                 </div>
                 <div class="flex-1">
                     <div class="text-lg font-semibold">Company Branch name</div>
@@ -57,7 +74,7 @@
         <div x-data="{ toggle2: false }" class="bg-[#060606B2] p-4 rounded-lg mb-6">
             <div class="flex items-center">
                 <div class="flex mb-5 mr-3 ">
-                    <img alt="Branch icon" class="mr-2 " height="24" src="../../images/shop.png" width="24" />
+                    <img alt="Branch icon" class="mr-2 " height="24" src="../images/shop.png" width="24" />
                 </div>
                 <div class="flex-1">
                     <div class="text-lg font-semibold">Company Branch name</div>

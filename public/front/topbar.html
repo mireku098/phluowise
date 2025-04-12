@@ -19,7 +19,7 @@
         <!-- Notification Icon -->
         <div class="relative">
             <button class="bg-[#F5F5F51A] p-2 rounded-lg flex items-center justify-center">
-                <img src="../../images//notification.svg" alt="">
+                <img src="../images//notification.svg" alt="">
             </button>
             <span
                 class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -30,7 +30,7 @@
         <!-- Share Icon -->
         <div class="relative">
             <button class="bg-[#F5F5F51A] p-2 rounded-full flex items-center justify-center">
-                <img src="../../images/fluent_branch-24-regular.png" alt="">
+                <img src="../images/fluent_branch-24-regular.png" alt="">
             </button>
             <span
                 class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -42,7 +42,7 @@
         <div class="relative shadow-lg" x-data="{ open: false }">
             <!-- Avatar Button -->
             <button @click="open = !open">
-                <img src="../../images/Rectangle 6166.svg"
+                <img src="../images/Rectangle 6166.svg"
                     class="w-10 h-10 rounded-full border border-gray-700" />
             </button>
 
@@ -73,6 +73,10 @@
                     :class="window.location.pathname.includes('login_details.html') ? 'bg-blue-600' : ''">
                     See Login Details
                 </a>
+                <a href="#" class="block logout-btn px-4 py-2 hover:bg-blue-600" onclick="return confirmLogout()" >
+                    Log out
+                  </a>
+                 
             </div>
 
         </div>

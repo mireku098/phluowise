@@ -5,6 +5,14 @@
     <title>Login Details</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+  
+    if (!isLoggedIn) {
+      window.location.href = "user-signin.html"; // Redirect to login if not authenticated
+    }
+  </script>
 </head>
 <body class="bg-black flex items-center justify-center min-h-screen p-4">
 <style>
