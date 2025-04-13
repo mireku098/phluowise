@@ -1,0 +1,109 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Include Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
+      
+        if (!isLoggedIn) {
+          window.location.href = "user-signin.html"; // Redirect if not authenticated
+        }
+      
+        const role = localStorage.getItem("userRole");
+      
+        if (role !== "admin") {
+          swal("Access Denied", "This page is for Admins only.", "error").then(() => {
+            // Optional: You can redirect them back to a common page like dashboard or home
+            // window.location.href = "dashboard.html";
+          });
+        }
+      </script>
+
+</head>
+
+<body class="bg-black flex items-center justify-center min-h-screen p-4">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <button onclick="history.back()"
+        class="fixed top-10 left-4 flex items-center text-white/70 hover:text-white transition duration-300 z-50">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        <span class="text-base font-medium">Back</span>
+    </button>
+    <div class="bg-[#F5F5F51A] border-gray-700 text-white rounded-lg p-8 w-full max-w-md">
+
+
+        <h2 class="text-center text-2xl font-semibold text-white mb-6">
+            Branches Settings
+        </h2>
+        <!-- First Branch -->
+            <div x-data="{ toggle1: true }" class="bg-[#060606B2] p-4 rounded-lg mb-6">
+                <div class="flex items-center ">
+                    <div class="flex mb-10 mr-3 ">
+                        <img alt="Branch icon" class="mr-2 " height="24" src="../images//shop.png" width="24" />
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-lg font-semibold">Company Branch name</div>
+                        <div class="text-gray-400">Company Branch location</div>
+                        <div class="text-red-400">Admin</div>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="toggle1" x-model="toggle1" class="hidden">
+                        <label for="toggle1" @click="toggle1 = !toggle1"
+                            class="toggle-label block w-10 h-6 rounded-full cursor-pointer relative"
+                            :class="toggle1 ? 'bg-green-900' : 'bg-gray-800'">
+                            <span class="toggle-circle absolute left-1 top-1 w-4 h-4 rounded-full transition-transform"
+                                :class="toggle1 ? 'bg-green-500 translate-x-4' : 'bg-gray-400 translate-x-0'">
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Second Branch -->
+        <div x-data="{ toggle2: false }" class="bg-[#060606B2] p-4 rounded-lg mb-6">
+            <div class="flex items-center">
+                <div class="flex mb-5 mr-3 ">
+                    <img alt="Branch icon" class="mr-2 " height="24" src="../images/shop.png" width="24" />
+                </div>
+                <div class="flex-1">
+                    <div class="text-lg font-semibold">Company Branch name</div>
+                    <div class="text-gray-400">Company Branch location</div>
+                </div>
+                <div>
+                    <input type="checkbox" id="toggle2" x-model="toggle2" class="hidden">
+                    <label for="toggle2"
+                        class="w-11 h-6 flex items-center bg-gray-800 rounded-full cursor-pointer p-1 transition duration-300"
+                        :class="toggle2 ? ' bg-green-600' : 'bg-gray-700'">
+                        <div class="w-4 h-4 bg-white rounded-full transition-transform duration-300"
+                            :class="toggle2 ? 'translate-x-5' : 'translate-x-0'">
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <a href="create_branch.html">
+            <button class="w-full bg-[#007ACC99] text-white py-2 rounded-lg mb-4">
+                Create Branch Space
+            </button></a>
+        <a href="delete_branch.html">
+            <button class="w-full bg-transparent text-red-500 py-2 rounded-lg border border-red-500">
+                Delete Branch
+            </button> </a>
+    </div>
+
+</body>
+
+</html>

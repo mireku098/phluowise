@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="../images/Phluowise_Business_icon.svg" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Include SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+
+<body class="bg-black flex items-center justify-center min-h-screen p-4">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <div class="bg-[#121212] border-gray-700 p-8 rounded-lg shadow-lg w-full max-w-md border">
+        <h2 class="text-2xl font-bold text-white mb-6">Welcome, Let's get you Started!</h2>
+        <form id="signupForm">
+            <!-- Company Name -->
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2" for="company-name">Company Name</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i class="fas fa-building text-gray-500"></i>
+                    </span>
+                    <input
+                        class="bg-gray-900 text-white border border-gray-700 rounded-lg pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="text" id="company-name" name="companyName" placeholder="Enter company name">
+                </div>
+                <p id="companyError" class="text-red-500 text-sm mt-1 hidden">Company name is required.</p>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2" for="email">Email</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i class="fas fa-envelope text-gray-500"></i>
+                    </span>
+                    <input
+                        class="bg-gray-900 text-white border border-gray-700 rounded-lg pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="email" id="email" name="email" placeholder="Enter your email">
+                </div>
+                <p id="emailError" class="text-red-500 text-sm mt-1 hidden">Invalid email format.</p>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2" for="password">Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i class="fas fa-lock text-gray-500"></i>
+                    </span>
+                    <input
+                        class="bg-gray-900 text-white border border-gray-700 rounded-lg pl-10 pr-10 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="password" id="password" name="password" placeholder="Enter Password">
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+                        onclick="togglePassword('password', 'togglePassword')">
+                        <i class="fas fa-eye text-gray-500" id="togglePassword"></i>
+                    </span>
+                </div>
+                <p id="passwordError" class="text-red-500 text-sm mt-1 hidden">
+                    Password must be at least 8 characters, contain uppercase, lowercase, number, and special character.
+                </p>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-6">
+                <label class="block text-gray-400 mb-2" for="confirm_password">Confirm Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i class="fas fa-lock text-gray-500"></i>
+                    </span>
+                    <input
+                        class="bg-gray-900 text-white border border-gray-700 rounded-lg pl-10 pr-10 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="password" id="confirm_password" name="confirmPassword" placeholder="Confirm Password">
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+                        onclick="togglePassword('confirm_password', 'toggleConfirmPassword')">
+                        <i class="fas fa-eye text-gray-500" id="toggleConfirmPassword"></i>
+                    </span>
+                </div>
+                <p id="confirmPasswordError" class="text-red-500 text-sm mt-1 hidden">Passwords do not match.</p>
+            </div>
+
+            <div class="mb-6">
+                <button type="submit"
+                    class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg w-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Sign Up
+                </button>
+            </div>
+            <div class="text-center text-gray-400">
+                or already have an account? <a href="user-signin.html" class="text-blue-500 hover:underline">Sign in</a>
+            </div>
+        </form>
+
+    </div>
+
+
+
+    <script>
+        // Function to toggle password visibility
+        function togglePassword(fieldId, iconId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleIcon = document.getElementById(iconId);
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.classList.replace("fa-eye", "fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                toggleIcon.classList.replace("fa-eye-slash", "fa-eye");
+            }
+        }
+    </script>
+    <!-- Include SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Function to validate email format
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Function to validate password format (At least 1 uppercase, 1 lowercase, 1 digit, 1 special character, and min length 8)
+        function isValidPassword(password) {
+            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/.test(password);
+        }
+
+        document.getElementById("signupForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent normal form submission
+
+            let companyName = document.getElementById("company-name").value.trim();
+            let email = document.getElementById("email").value.trim();
+            let password = document.getElementById("password").value.trim();
+            let confirmPassword = document.getElementById("confirm_password").value.trim();
+
+            let isValid = true;
+
+            // Validate fields and show error messages
+            if (!companyName) {
+                document.getElementById("companyError").textContent = "Company name is required";
+                isValid = false;
+            } else {
+                document.getElementById("companyError").textContent = "";
+            }
+
+            if (!isValidEmail(email)) {
+                document.getElementById("emailError").textContent = "Please enter a valid email address";
+                isValid = false;
+            } else {
+                document.getElementById("emailError").textContent = "";
+            }
+
+            if (!isValidPassword(password)) {
+                document.getElementById("passwordError").textContent = "Password must be at least 8 characters long, contain 1 uppercase, 1 lowercase, 1 number, and 1 special character.";
+                isValid = false;
+            } else {
+                document.getElementById("passwordError").textContent = "";
+            }
+
+            if (password !== confirmPassword) {
+                document.getElementById("confirmPasswordError").textContent = "Passwords do not match.";
+                isValid = false;
+            } else {
+                document.getElementById("confirmPasswordError").textContent = "";
+            }
+
+            if (!isValid) return; // Stop execution if validation fails
+
+
+
+            // Prepare form data with ID
+            let formData = {
+
+                companyName: companyName,
+                email: email,
+                password: password,
+                confirmPassword: confirmPassword,
+                role: "Admin" // Hardcoded as Admin
+            };
+
+            // Send data to backend using Fetch API
+            fetch("http://localhost:5161/api/auth/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // Parse JSON response
+                })
+                .then(data => {
+                    console.log("Parsed Response:", data); // Debugging
+
+                    if (data.success) {
+                        Swal.fire({
+                            title: "Signup Successful!",
+                            text: "Redirecting to OTP verification...",
+                            icon: "success",
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            // Save the entire signup data locally
+                            let existingAccounts = JSON.parse(localStorage.getItem("signupAccounts")) || [];
+
+                            // Prevent duplicate emails or branch codes if needed
+                            const alreadyExists = existingAccounts.some(acc =>
+                                acc.email === formData.email || acc.branch === formData.branch
+                            );
+
+                            if (!alreadyExists) {
+                                existingAccounts.push(formData);
+                                localStorage.setItem("signupAccounts", JSON.stringify(existingAccounts));
+                            }
+
+                            window.location.href = "user-otp.html";
+                        });
+                    } else {
+                        // Build and show error messages
+                        let errorMessage = "";
+                        if (data.errors?.company_name) errorMessage += `<p>${data.errors.company_name}</p>`;
+                        if (data.errors?.email) errorMessage += `<p>${data.errors.email}</p>`;
+                        if (data.errors?.password) errorMessage += `<p>${data.errors.password}</p>`;
+                        if (data.errors?.confirm_password) errorMessage += `<p>${data.errors.confirm_password}</p>`;
+                        if (data.errors?.otp_error) errorMessage += `<p>${data.errors.otp_error}</p>`;
+
+                        // Display the error messages in Swal
+                        Swal.fire({
+                            title: "Signup Failed!",
+                            html: errorMessage || "Something went wrong, please try again.",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
+
+                        console.error("Signup failed:", data.errors); // Log errors
+                    }
+                })
+                .catch(error => {
+                    console.error("Fetch Error:", error);
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An unexpected error occurred. Please try again later.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
+                });
+        });
+    </script>
+
+
+
+
+</body>
+
+</html>
