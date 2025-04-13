@@ -11,14 +11,14 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script>
-        const isLoggedIn = localStorage.getItem("isLoggedIn");
-        if (!isLoggedIn) {
-            window.location.href = "user-signin.html";
-        }
-        const role = localStorage.getItem("userRole");
-        if (role !== "admin") {
-            swal("Access Denied", "This page is for Admins only.", "error").then(() => { });
-        }
+        // const isLoggedIn = localStorage.getItem("isLoggedIn");
+        // if (!isLoggedIn) {
+        //     window.location.href = "user-signin.html";
+        // }
+        // const role = localStorage.getItem("userRole");
+        // if (role !== "admin") {
+        //     swal("Access Denied", "This page is for Admins only.", "error").then(() => { });
+        // }
     </script>
 </head>
 
