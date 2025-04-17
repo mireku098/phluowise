@@ -49,7 +49,7 @@
           background: rgba(15, 23, 42, 0.6);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          /* border: 1px solid rgba(255, 255, 255, 0.1); */
           box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
         
@@ -162,12 +162,12 @@
                 </script>
             </div>
             <!-- Main Content Area -->
-            <div class="container mx-auto mt-16 p-4">
+            <div class="container mx-auto mt-16 p-4"> 
                 <!-- write the content of the page here -->
-                <div class="glassmorphism rounded-xl p-6 mb-8">
-                    <div class="flex items-center justify-between mb-6">
-                      <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">Notification Center</h1>
-                      <div class="flex space-x-2">
+                <div class="glassmorphism rounded-xl bg-black p-6 mb-8">
+                    <div class="flex items-center  justify-between mb-6">
+                      <h1 class="text-xl bg-clip-text ">Notification Center</h1>
+                      <!-- <div class="flex space-x-2">
                         <button class="btn-primary px-3 py-1 rounded-lg text-sm font-medium flex items-center">
                           <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
@@ -181,10 +181,10 @@
                           </svg>
                           View All
                         </button>
-                      </div>
+                      </div> -->
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="notifications-container">
+                    <div class="grid grid-cols-1  md:grid-cols-2 gap-4" id="notifications-container">
                       <!-- Notifications will be dynamically inserted here -->
                     </div>
                   </div>
@@ -197,7 +197,7 @@
                         location: 'location',
                         timestamp: '12:30am July 20, 2023',
                         actions: ['Accept', 'Deny', 'Pend', 'Broadcast'],
-                        image: '/api/placeholder/80/80'
+                        image: '../images/user.png'
                       },
                       {
                         type: 'product',
@@ -210,7 +210,7 @@
                           type: 'Dispenser bottle'
                         },
                         actions: ['Accept'],
-                        image: '/api/placeholder/80/80'
+                        image: '../images/user.png'
                       },
                       
                       {
@@ -220,7 +220,7 @@
                         rating: 3.0,
                         ratingText: 'Moderate rating',
                         timestamp: '6:30am 21 Dec,2023',
-                        image: '/api/placeholder/80/80'
+                        image: '../images/user.png'
                       },
                       {
                         type: 'location-update',
@@ -228,7 +228,7 @@
                         status: 'Order received',
                         amount: 'GH₵24',
                         timestamp: '6:30am 21 Dec,2023',
-                        image: '/api/placeholder/80/80'
+                        image: '../images/user.png'
                       },
                       {
                         type: 'driver-location',
@@ -236,7 +236,7 @@
                         status: 'Payment received',
                         amount: 'GH₵20',
                         timestamp: '6:30am 21 Dec,2023',
-                        image: '/api/placeholder/80/80'
+                        image: '../images/user.png'
                       },
                       {
                         type: 'payment',
@@ -244,7 +244,7 @@
                         status: 'Payment successful',
                         amount: 'GH₵20',
                         timestamp: '6:30am 21 Dec,2023',
-                        image: '/api/placeholder/80/80'
+                        image: '../images/user.png'
                       },
                     
                     ];
@@ -256,7 +256,7 @@
                     // Function to create notification cards
                     function createNotificationCard(notification) {
                         const card = document.createElement('div');
-                        card.className = 'glassmorphism rounded-xl p-4 notification-container notification-enter relative overflow-hidden';
+                        card.className = 'glassmorphism rounded-xl p-4 notification-container bg-zinc-900 notification-enter relative overflow-hidden';
                         
                         let cardContent = '';
                         let badge = '';
@@ -264,20 +264,20 @@
                         // Add badge based on notification type
                         switch(notification.type) {
                             case 'visit':
-                            badge = '<span class="badge absolute top-3 right-3 bg-blue-500 text-xs font-semibold">VISIT</span>';
+                            badge = '<span class="badge absolute top-16 right-3  text-xs font-semibold">VISIT</span>';
                             break;
                             case 'product':
-                            badge = '<span class="badge absolute top-3 right-3 bg-green-500 text-xs font-semibold">PRODUCT</span>';
+                            badge = '<span class="badge absolute top-16 right-3 text-xs font-semibold">PRODUCT</span>';
                             break;
                             case 'rating':
-                            badge = '<span class="badge absolute top-3 right-3 bg-yellow-500 text-xs font-semibold">RATING</span>';
+                            badge = '<span class="badge absolute top-16 right-3 text-xs font-semibold">RATING</span>';
                             break;
                             case 'payment':
-                            badge = '<span class="badge absolute top-3 right-3 bg-purple-500 text-xs font-semibold">PAYMENT</span>';
+                            badge = '<span class="badge absolute top-16 right-3 text-xs font-semibold">PAYMENT</span>';
                             break;
                             case 'location-update':
                             case 'driver-location':
-                            badge = '<span class="badge absolute top-3 right-3 bg-indigo-500 text-xs font-semibold">LOCATION</span>';
+                            badge = '<span class="badge absolute top-16 right-3 text-xs font-semibold">LOCATION</span>';
                             break;
                         }
                         

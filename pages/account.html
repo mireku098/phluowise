@@ -15,9 +15,9 @@
 
 
 
-          
-      
-   
+
+
+
 
 </head>
 
@@ -525,7 +525,7 @@
                             <!-- Right column -->
                             <div class="space-y-4">
                                 <!-- Account Withdrawal -->
-                                <div class="glassmorphism p-6 flex justify-between items-center">
+                                <div class="glassmorphism  p-6 flex justify-between items-center">
                                     <span class="text-gray-300">Set Account Withdrawal Method</span>
                                     <!-- <label class="toggle-switch">
                                         <input type="checkbox" id="withdrawal-toggle" checked>
@@ -733,6 +733,7 @@
 
         document.getElementById('payment-method').addEventListener('click', function () {
             alert('Set your payment method here!');
+            window.location.href = 'payment_methods.html';
         });
 
         // Toggle switches - make them mutually exclusive for manual and auto

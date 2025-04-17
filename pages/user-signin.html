@@ -12,7 +12,6 @@
 
 
 </head>
-
 <body class="bg-black flex items-center justify-center min-h-screen p-4">
   <style>
     body {
@@ -21,8 +20,7 @@
   </style>
   <style>
     .input-error {
-      border: 1px solid #f87171 !important;
-      /* Tailwind red-400 */
+      border: 1px solid #f87171 !important; /* Tailwind red-400 */
     }
   </style>
   <div class="bg-[#121212] p-8 rounded-lg shadow-lg w-full max-w-md border border-gray-700">
@@ -34,9 +32,7 @@
           <span class="absolute inset-y-0 left-0 flex items-center pl-3">
             <i class="fas fa-envelope text-gray-500"></i>
           </span>
-          <input
-            class="bg-[#1E1E1E] text-white rounded-lg pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-            type="email" id="email" placeholder="Enter your email">
+          <input class="bg-[#1E1E1E] text-white rounded-lg pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" type="email" id="loginEmail" placeholder="Enter your email">
         </div>
         <span id="emailError" class="error-message text-red-500 text-sm"></span>
       </div>
@@ -46,9 +42,7 @@
           <span class="absolute inset-y-0 left-0 flex items-center pl-3">
             <img src="../images/solar_password-linear.svg" alt="Branch Icon" class="h-5 w-5 text-gray-500">
           </span>
-          <input
-            class="bg-[#1E1E1E] text-white rounded-lg pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-            type="text" id="branch" placeholder="Enter branch unique code">
+          <input class="bg-[#1E1E1E] text-white rounded-lg pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" id="branch" placeholder="Enter branch unique code">
         </div>
         <span id="branchError" class="error-message text-red-500 text-sm"></span>
       </div>
@@ -58,9 +52,7 @@
           <span class="absolute inset-y-0 left-0 flex items-center pl-3">
             <i class="fas fa-lock text-gray-500"></i>
           </span>
-          <input
-            class="bg-[#1E1E1E] text-white rounded-lg pl-10 pr-10 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-            type="password" id="password" placeholder="Enter password">
+          <input class="bg-[#1E1E1E] text-white rounded-lg pl-10 pr-10 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" type="password" id="loginPassword" placeholder="Enter password">
           <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" onclick="togglePassword()">
             <i id="toggleIcon" class="fas fa-eye text-gray-500"></i>
           </span>
@@ -71,23 +63,18 @@
         </div>
       </div>
       <div class="flex gap-2 justify-center mb-8">
-        <button type="button" id="adminBtn"
-          class="role-toggle bg-blue-900 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg"
-          onclick="selectRole('admin')">Admin</button>
-        <button type="button" id="branchBtn"
-          class="role-toggle bg-gray-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg"
-          onclick="selectRole('branch')">Branch</button>
+        <button type="button" id="adminBtn" class="role-toggle bg-blue-900 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg" onclick="selectRole('admin')">Admin</button>
+        <button type="button" id="branchBtn" class="role-toggle bg-gray-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg" onclick="selectRole('branch')">Branch</button>
         <input type="hidden" id="role" name="role" value="admin">
       </div>
       <div class="mb-6">
-        <button type="submit"
-          class="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Log
-          In</button>
+        <button type="submit" class="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Log In</button>
       </div>
       <div class="text-center text-gray-400">
         or don't have an account? <a href="user-signup.html" class="text-blue-500 hover:underline">Sign up</a>
       </div>
     </form>
+    <div id="loginMessage" class="message"></div>
   </div>
 
   <script>
@@ -105,8 +92,47 @@
       }
     }
 
+    function selectRole(role) {
+      const adminBtn = document.getElementById('adminBtn');
+      const branchBtn = document.getElementById('branchBtn');
+      const roleInput = document.getElementById('role');
+
+      roleInput.value = role;
+
+      adminBtn.classList.toggle('bg-blue-900', role === 'admin');
+      adminBtn.classList.toggle('bg-gray-600', role !== 'admin');
+      branchBtn.classList.toggle('bg-blue-900', role === 'branch');
+      branchBtn.classList.toggle('bg-gray-600', role !== 'branch');
+
+      document.getElementById('emailContainer').classList.toggle('hidden', role !== 'admin');
+      document.getElementById('branchContainer').classList.toggle('hidden', role !== 'branch');
+    }
+
+    function showError(fieldId, message) {
+      const errorElement = document.getElementById(`${fieldId}Error`);
+      const inputField = document.getElementById(fieldId);
+      errorElement.textContent = message;
+      inputField.classList.add('input-error');
+    }
+
+    function resetErrors() {
+      const errorMessages = document.querySelectorAll('.error-message');
+      const inputs = document.querySelectorAll('input');
+
+      errorMessages.forEach(el => el.textContent = '');
+      inputs.forEach(el => el.classList.remove('input-error'));
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      selectRole("admin"); // Default
+    });
+
     document.getElementById("loginForm").addEventListener("submit", async function (event) {
-      event.preventDefault(); // Prevent default form submission
+      event.preventDefault();
 
       const email = document.getElementById("email").value.trim();
       const branch = document.getElementById("branch").value.trim();
@@ -114,7 +140,7 @@
       const role = document.getElementById("role").value;
 
       let isValid = true;
-      resetErrors(); // Reset any previous error messages
+      resetErrors();
 
       if (role === "admin") {
         if (!email) {
@@ -163,87 +189,34 @@
             return await Swal.fire("Email not verified", "Please verify your email before logging in.", "warning");
           }
 
-          // Now check the localStorage for the saved account data
-          const accounts = JSON.parse(localStorage.getItem("signupAccounts")) || [];
-          let matchedUser = null;
-
-          if (role === "admin") {
-            matchedUser = accounts.find(acc => acc.email === email && acc.password === password);
-          } else if (role === "branch") {
-            matchedUser = accounts.find(acc => acc.branch === branch && acc.password === password);
-          }
-
-          if (matchedUser) {
-            // Store session details
             localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("userEmail", matchedUser.email || "");
-            localStorage.setItem("userRole", role);
-            localStorage.setItem("branchCode", matchedUser.branch || "");
-            localStorage.setItem("sessionToken", matchedUser.token || "demo-token");
+          localStorage.setItem("userId", data.userId || "");
+          localStorage.setItem("userEmail", data.email || "");
+          localStorage.setItem("userRole", data.role || "");
+          localStorage.setItem("branchCode", data.branchCode || "");
+          localStorage.setItem("accessToken", data.token || "");
 
-            await Swal.fire("Login Successful", "Redirecting to your account page...", "success");
+          await Swal.fire("Log in successful", "You will be redirected shortly.", "success");
             window.location.href = "account.html";
           } else {
-            await Swal.fire("Login Failed", "Account not found or credentials mismatch.", "error");
+          const msg = data.message || "Please try again.";
+          if (role === "admin" && msg.includes("Email")) {
+            await Swal.fire("Email not found", msg, "warning");
+          } else if (role === "branch" && msg.includes("Branch")) {
+            await Swal.fire("Branch not found", msg, "warning");
+          } else {
+            await Swal.fire("Invalid credentials", msg, "error");
           }
-        } else {
-          // If login fails (wrong credentials)
-          const msg = data.message || "Invalid credentials, please try again.";
-          await Swal.fire("Login Failed", msg, "error");
         }
       } catch (error) {
         console.error("Error during login:", error);
         await Swal.fire("An error occurred", "Please try again later.", "error");
       }
     });
-
-    // Show error messages
-    function showError(fieldId, message) {
-      const errorElement = document.getElementById(`${fieldId}Error`);
-      const inputField = document.getElementById(fieldId);
-      errorElement.textContent = message;
-      inputField.classList.add('input-error');
-    }
-
-    // Reset error messages
-    function resetErrors() {
-      const errorMessages = document.querySelectorAll('.error-message');
-      const inputs = document.querySelectorAll('input');
-
-      errorMessages.forEach(el => el.textContent = '');
-      inputs.forEach(el => el.classList.remove('input-error'));
-    }
-
-    // Validate email format
-    function isValidEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    // Role Selection Button Logic (for UI/UX changes)
-    function selectRole(role) {
-      const adminBtn = document.getElementById('adminBtn');
-      const branchBtn = document.getElementById('branchBtn');
-      const roleInput = document.getElementById('role');
-
-      roleInput.value = role;
-
-      adminBtn.classList.toggle('bg-blue-900', role === 'admin');
-      adminBtn.classList.toggle('bg-gray-600', role !== 'admin');
-      branchBtn.classList.toggle('bg-blue-900', role === 'branch');
-      branchBtn.classList.toggle('bg-gray-600', role !== 'branch');
-
-      document.getElementById('emailContainer').classList.toggle('hidden', role !== 'admin');
-      document.getElementById('branchContainer').classList.toggle('hidden', role !== 'branch');
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      selectRole("admin"); // Set default role to admin on page load
-    });
-
   </script>
   <script>
     const isLoggedIn = localStorage.getItem("isLoggedIn");
-    if (isLoggedIn === "true") {
+    if (isLoggedIn) {
       window.location.href = "account.html"; // Redirect to account page if already logged in
     }
     document.getElementById("loginForm").addEventListener("submit", function (event) {
