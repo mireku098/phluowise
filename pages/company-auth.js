@@ -8,53 +8,45 @@ const STORAGE_KEYS = {
   REGISTERED_COMPANY: "registeredCompany",
   LOGGED_IN_COMPANY: "loggedInCompany",
   AUTH_TOKEN: "authToken",
+  OTP_EMAIL: "otpEmail",
+  RESEND_TIMEOUT: "resendTimeout"
 };
 
-// Initialize event listeners for forms that exist on the current page
-document.addEventListener("DOMContentLoaded", () => {
-  // Registration
-  if (document.getElementById("registerForm")) {
-    document
-      .getElementById("registerForm")
-      .addEventListener("submit", handleRegister);
-  }
-
-  // Login
-  if (document.getElementById("loginForm")) {
-    document
-      .getElementById("loginForm")
-      .addEventListener("submit", handleLogin);
-  }
-
-  // Forgot Password
-  if (document.getElementById("forgotForm")) {
-    document
-      .getElementById("forgotForm")
-      .addEventListener("submit", handleForgotPassword);
-  }
-
-  // OTP Validation
+// Initialize all event listeners
+document.addEventListener('DOMContentLoaded', () => {
+  // OTP Page
   if (document.getElementById("otpForm")) {
-    document
-      .getElementById("otpForm")
-      .addEventListener("submit", handleOtpValidation);
-    checkOtpPageAccess(); // Verify user should be on this page
+    setupOtpInputs();
+    checkOtpPageAccess();
+    setupResendButton();
+    document.getElementById("otpForm").addEventListener("submit", handleOtpValidation);
   }
 
-  // Change Password
+  // Registration Page
+  if (document.getElementById("registerForm")) {
+    document.getElementById("registerForm").addEventListener("submit", handleRegister);
+  }
+
+  // Login Page
+  if (document.getElementById("loginForm")) {
+    document.getElementById("loginForm").addEventListener("submit", handleLogin);
+  }
+
+  // Forgot Password Page
+  if (document.getElementById("forgotForm")) {
+    document.getElementById("forgotForm").addEventListener("submit", handleForgotPassword);
+  }
+
+  // Change Password Page
   if (document.getElementById("changeForm")) {
-    document
-      .getElementById("changeForm")
-      .addEventListener("submit", handleChangePassword);
-    checkAuthAccess(); // Verify user is authenticated
+    checkAuthAccess();
+    document.getElementById("changeForm").addEventListener("submit", handleChangePassword);
   }
 
-  // Reset Password
+  // Reset Password Page
   if (document.getElementById("resetForm")) {
-    document
-      .getElementById("resetForm")
-      .addEventListener("submit", handleResetPassword);
-    checkResetPasswordAccess(); // Verify user should be on this page
+    checkResetPasswordAccess();
+    document.getElementById("resetForm").addEventListener("submit", handleResetPassword);
   }
 });
 
@@ -63,8 +55,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // ========================
 async function handleRegister(e) {
   e.preventDefault();
-  showLoading("registerForm");
-
+  const form = document.getElementById("registerForm");
+  const messageElement = document.getElementById("registerMessage");
+  
   const companyData = {
     companyName: document.getElementById("companyName").value,
     companyEmail: document.getElementById("companyEmail").value,
@@ -74,31 +67,28 @@ async function handleRegister(e) {
   };
 
   try {
+    showLoading(form);
     const response = await fetch(`${baseUrl}/company/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(companyData),
+      body: JSON.stringify(companyData)
     });
 
     const result = await response.json();
     console.log("Register Response:", result);
 
     if (response.ok) {
-      showMessage("registerMessage", result.message, "success");
+      showMessage(messageElement, result.message, "success");
       localStorage.setItem(STORAGE_KEYS.OTP_TOKEN, result.token);
-      // Redirect to OTP page after short delay
-      setTimeout(() => (window.location.href = "otp-verification.html"), 1500);
+      localStorage.setItem(STORAGE_KEYS.OTP_EMAIL, companyData.companyEmail);
+      setTimeout(() => window.location.href = "otp-verification.html", 1500);
     } else {
-      showMessage(
-        "registerMessage",
-        result.message || "Registration failed.",
-        "error"
-      );
+      showMessage(messageElement, result.message || "Registration failed.", "error");
     }
   } catch (error) {
-    showMessage("registerMessage", `Error: ${error.message}`, "error");
+    showMessage(messageElement, `Error: ${error.message}`, "error");
   } finally {
-    hideLoading("registerForm");
+    hideLoading(form);
   }
 }
 
@@ -107,14 +97,16 @@ async function handleRegister(e) {
 // ========================
 async function handleLogin(e) {
   e.preventDefault();
-  showLoading("loginForm");
-
+  const form = document.getElementById("loginForm");
+  const messageElement = document.getElementById("loginMessage");
+  
   const loginData = {
     email: document.getElementById("loginEmail").value,
     password: document.getElementById("loginPassword").value,
   };
 
   try {
+    showLoading(form);
     const response = await fetch(`${baseUrl}/company/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -125,18 +117,18 @@ async function handleLogin(e) {
     console.log("Login Response:", result);
 
     if (response.ok) {
-      showMessage("loginMessage", result.message, "success");
-      localStorage.setItem(STORAGE_KEYS.otp-verification.html_PURPOSE, "login");
+      showMessage(messageElement, result.message, "success");
+      localStorage.setItem(STORAGE_KEYS.OTP_PURPOSE, "login");
       localStorage.setItem(STORAGE_KEYS.LOGIN_TOKEN, result.token);
-      // Redirect to OTP page after short delay
-      setTimeout(() => (window.location.href = "otp-verification.html"), 1500);
+      localStorage.setItem(STORAGE_KEYS.OTP_EMAIL, loginData.email);
+      setTimeout(() => window.location.href = "otp-verification.html", 1500);
     } else {
-      showMessage("loginMessage", result.message || "Login failed.", "error");
+      showMessage(messageElement, result.message || "Login failed.", "error");
     }
   } catch (error) {
-    showMessage("loginMessage", `Error: ${error.message}`, "error");
+    showMessage(messageElement, `Error: ${error.message}`, "error");
   } finally {
-    hideLoading("loginForm");
+    hideLoading(form);
   }
 }
 
@@ -145,11 +137,13 @@ async function handleLogin(e) {
 // ========================
 async function handleForgotPassword(e) {
   e.preventDefault();
-  showLoading("forgotForm");
-
+  const form = document.getElementById("forgotForm");
+  const messageElement = document.getElementById("forgotMessage");
+  
   const email = document.getElementById("forgotEmail").value;
 
   try {
+    showLoading(form);
     const response = await fetch(`${baseUrl}/company/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -160,38 +154,34 @@ async function handleForgotPassword(e) {
     console.log("Forgot Password Response:", result);
 
     if (response.ok) {
-      showMessage("forgotMessage", result.message, "success");
+      showMessage(messageElement, result.message, "success");
       localStorage.setItem(STORAGE_KEYS.OTP_PURPOSE, "forgot");
       localStorage.setItem(STORAGE_KEYS.LOGIN_TOKEN, result.token);
-      // Redirect to OTP page after short delay
-      setTimeout(() => (window.location.href = "otp-verification.html"), 1500);
+      localStorage.setItem(STORAGE_KEYS.OTP_EMAIL, email);
+      setTimeout(() => window.location.href = "otp-verification.html", 1500);
     } else {
-      showMessage(
-        "forgotMessage",
-        result.message || "Failed to send OTP.",
-        "error"
-      );
+      showMessage(messageElement, result.message || "Failed to send OTP.", "error");
     }
   } catch (error) {
-    showMessage("forgotMessage", `Error: ${error.message}`, "error");
+    showMessage(messageElement, `Error: ${error.message}`, "error");
   } finally {
-    hideLoading("forgotForm");
+    hideLoading(form);
   }
 }
 
 // ========================
-// 4. OTP VALIDATION (Updated for your design)
+// 4. OTP VALIDATION
 // ========================
 async function handleOtpValidation(e) {
   e.preventDefault();
+  const form = document.getElementById("otpForm");
   const errorElement = document.getElementById("errorMessage");
   const verifyButton = document.getElementById("verifyButton");
-
+  
   // Combine all OTP digits
-  const otp = Array.from(
-    { length: 6 },
-    (_, i) => document.getElementById(`otp${i + 1}`).value
-  ).join("");
+  const otp = Array.from({length: 6}, (_, i) => 
+    document.getElementById(`otp${i+1}`).value.trim()
+  ).join('');
 
   // Validate OTP length
   if (otp.length !== 6) {
@@ -202,163 +192,95 @@ async function handleOtpValidation(e) {
 
   // Show loading state
   verifyButton.disabled = true;
-  verifyButton.innerHTML = '<span class="spinner"></span> Verifying...';
+  verifyButton.classList.add("btn-loading");
+  verifyButton.innerHTML = 'Verifying...';
 
   const registerToken = localStorage.getItem(STORAGE_KEYS.OTP_TOKEN);
-
-  // Check if OTP is for registration
-  if (registerToken) {
-    try {
-      const response = await fetch(`${baseUrl}/company/register-validate-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ regsiter_token: registerToken, otp }),
-      });
-
-      const result = await response.json();
-      console.log("OTP Validation (Registration) Response:", result);
-
-      if (response.ok) {
-        errorElement.classList.add("hidden");
-        localStorage.setItem(
-          STORAGE_KEYS.REGISTERED_COMPANY,
-          JSON.stringify(result)
-        );
-        localStorage.removeItem(STORAGE_KEYS.OTP_TOKEN);
-        // Show success and redirect
-        showToast("Company registered successfully!", "success");
-        setTimeout(() => (window.location.href = "user-signin.html"), 2000);
-      } else {
-        errorElement.textContent = result.message || "OTP validation failed.";
-        errorElement.classList.remove("hidden");
-      }
-    } catch (error) {
-      errorElement.textContent = `Error: ${error.message}`;
-      errorElement.classList.remove("hidden");
-    } finally {
-      verifyButton.disabled = false;
-      verifyButton.textContent = "Verify Code";
-    }
-    return;
-  }
-
-  // Check if OTP is for login/forgot password
-  const token = localStorage.getItem(STORAGE_KEYS.LOGIN_TOKEN);
+  const loginToken = localStorage.getItem(STORAGE_KEYS.LOGIN_TOKEN);
   const purpose = localStorage.getItem(STORAGE_KEYS.OTP_PURPOSE);
 
-  if (token) {
-    try {
-      const response = await fetch(`${baseUrl}/company/validate-otp`, {
+  try {
+    let response, result;
+    
+    // Determine which validation endpoint to use
+    if (registerToken) {
+      response = await fetch(`${baseUrl}/company/register-validate-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, otp }),
+        body: JSON.stringify({ 
+          token: registerToken,
+          otp: otp
+        })
       });
-
-      const result = await response.json();
-      console.log("OTP Validation (Login/Forgot) Response:", result);
-
-      if (response.ok) {
-        errorElement.classList.add("hidden");
-        localStorage.setItem(
-          STORAGE_KEYS.LOGGED_IN_COMPANY,
-          JSON.stringify(result)
-        );
-        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, result.token);
-        localStorage.removeItem(STORAGE_KEYS.LOGIN_TOKEN);
-        localStorage.removeItem(STORAGE_KEYS.OTP_PURPOSE);
-
-        // Show success and redirect based on purpose
-        const message =
-          purpose === "forgot"
-            ? "OTP verified! Redirecting to password reset..."
-            : "Login successful!";
-        showToast(message, "success");
-
-        setTimeout(() => {
-          window.location.href =
-            purpose === "forgot"
-              ? "setnew_password.html"
-              : "change_password.html";
-        }, 1500);
-      } else {
-        errorElement.textContent = result.message || "OTP validation failed.";
-        errorElement.classList.remove("hidden");
-      }
-    } catch (error) {
-      errorElement.textContent = `Error: ${error.message}`;
-      errorElement.classList.remove("hidden");
-    } finally {
-      verifyButton.disabled = false;
-      verifyButton.textContent = "Verify Code";
+    } else if (loginToken) {
+      response = await fetch(`${baseUrl}/company/validate-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          token: loginToken,
+          otp: otp
+        })
+      });
+    } else {
+      throw new Error("No OTP session found. Please start the process again.");
     }
-    return;
+
+    result = await response.json();
+    console.log("OTP Validation Response:", result);
+
+    if (!response.ok) {
+      throw new Error(result.message || "OTP validation failed. Please try again.");
+    }
+
+    // Success handling
+    errorElement.classList.add("hidden");
+    
+    if (registerToken) {
+      // Registration success
+      localStorage.setItem(STORAGE_KEYS.REGISTERED_COMPANY, JSON.stringify(result));
+      localStorage.removeItem(STORAGE_KEYS.OTP_TOKEN);
+      showSuccessToast("Registration successful! Redirecting to login...");
+      setTimeout(() => window.location.href = "user-signin.html", 2000);
+    } else {
+      // Login/Forgot password success
+      localStorage.setItem(STORAGE_KEYS.LOGGED_IN_COMPANY, JSON.stringify(result));
+      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, result.token);
+      localStorage.removeItem(STORAGE_KEYS.LOGIN_TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.OTP_PURPOSE);
+
+      const redirectUrl = purpose === "forgot" 
+        ? "reset-password.html" 
+        : "account.html"; // Change to your dashboard page
+      showSuccessToast(purpose === "forgot" 
+        ? "OTP verified! Redirecting to password reset..." 
+        : "Login successful!");
+      setTimeout(() => window.location.href = redirectUrl, 1500);
+    }
+  } catch (error) {
+    console.error("OTP Validation Error:", error);
+    errorElement.textContent = error.message;
+    errorElement.classList.remove("hidden");
+    
+    // If the error suggests an expired/invalid token, clear it
+    if (error.message.includes("expired") || error.message.includes("invalid")) {
+      localStorage.removeItem(STORAGE_KEYS.OTP_TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.LOGIN_TOKEN);
+    }
+  } finally {
+    verifyButton.disabled = false;
+    verifyButton.classList.remove("btn-loading");
+    verifyButton.textContent = "Verify Code";
   }
-
-  // If no token is found
-  errorElement.textContent = "No OTP request found. Please start over.";
-  errorElement.classList.remove("hidden");
-  verifyButton.disabled = false;
-  verifyButton.textContent = "Verify Code";
-}
-
-// Add OTP input auto-focus functionality
-function setupOtpInputs() {
-  const otpInputs = document.querySelectorAll(".otp-field");
-
-  otpInputs.forEach((input, index) => {
-    // Allow only numeric input
-    input.addEventListener("input", (e) => {
-      e.target.value = e.target.value.replace(/[^0-9]/g, "");
-      if (e.target.value.length === 1 && index < otpInputs.length - 1) {
-        otpInputs[index + 1].focus();
-      }
-    });
-
-    // Handle backspace
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Backspace" && e.target.value === "" && index > 0) {
-        otpInputs[index - 1].focus();
-      }
-    });
-  });
-}
-
-// Update the DOMContentLoaded event listener to include OTP setup
-document.addEventListener("DOMContentLoaded", () => {
-  // ... (previous initialization code)
-
-  // OTP Validation
-  if (document.getElementById("otpForm")) {
-    document
-      .getElementById("otpForm")
-      .addEventListener("submit", handleOtpValidation);
-    setupOtpInputs();
-    checkOtpPageAccess();
-  }
-});
-
-// Helper function to show toast notifications
-function showToast(message, type) {
-  const toast = document.createElement("div");
-  toast.className = `fixed top-4 right-4 px-4 py-2 rounded-md shadow-lg ${
-    type === "success" ? "bg-green-600" : "bg-red-600"
-  } text-white`;
-  toast.textContent = message;
-  document.body.appendChild(toast);
-
-  setTimeout(() => {
-    toast.classList.add("opacity-0", "transition-opacity", "duration-300");
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
 }
 
 // ========================
-// 5. CHANGE PASSWORD (Authenticated)
+// 5. CHANGE PASSWORD
 // ========================
 async function handleChangePassword(e) {
   e.preventDefault();
-  showLoading("changeForm");
-
+  const form = document.getElementById("changeForm");
+  const messageElement = document.getElementById("changeMessage");
+  
   const changeData = {
     email: document.getElementById("changeEmail").value,
     oldPassword: document.getElementById("oldPassword").value,
@@ -368,12 +290,12 @@ async function handleChangePassword(e) {
   const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
 
   if (!token) {
-    showMessage("changeMessage", "Unauthorized. Please log in first.", "error");
-    hideLoading("changeForm");
+    showMessage(messageElement, "Unauthorized. Please log in first.", "error");
     return;
   }
 
   try {
+    showLoading(form);
     const response = await fetch(`${baseUrl}/company/change-password`, {
       method: "PUT",
       headers: {
@@ -387,40 +309,36 @@ async function handleChangePassword(e) {
     console.log("Change Password Response:", result);
 
     if (response.ok) {
-      showMessage("changeMessage", result.message, "success");
-      // Clear form on success
-      document.getElementById("changeForm").reset();
+      showMessage(messageElement, result.message, "success");
+      form.reset();
     } else {
-      showMessage(
-        "changeMessage",
-        result.message || "Change password failed.",
-        "error"
-      );
+      showMessage(messageElement, result.message || "Change password failed.", "error");
     }
   } catch (error) {
-    showMessage("changeMessage", `Error: ${error.message}`, "error");
+    showMessage(messageElement, `Error: ${error.message}`, "error");
   } finally {
-    hideLoading("changeForm");
+    hideLoading(form);
   }
 }
 
 // ========================
-// 6. RESET PASSWORD (Authenticated)
+// 6. RESET PASSWORD
 // ========================
 async function handleResetPassword(e) {
   e.preventDefault();
-  showLoading("resetForm");
-
+  const form = document.getElementById("resetForm");
+  const messageElement = document.getElementById("resetMessage");
+  
   const newPassword = document.getElementById("resetPassword").value;
   const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
 
   if (!token) {
-    showMessage("resetMessage", "Unauthorized. Please log in first.", "error");
-    hideLoading("resetForm");
+    showMessage(messageElement, "Unauthorized. Please log in first.", "error");
     return;
   }
 
   try {
+    showLoading(form);
     const response = await fetch(`${baseUrl}/company/reset-password`, {
       method: "POST",
       headers: {
@@ -434,96 +352,205 @@ async function handleResetPassword(e) {
     console.log("Reset Password Response:", result);
 
     if (response.ok) {
-      showMessage("resetMessage", result.message, "success");
-      // Clear form and redirect to login
-      document.getElementById("resetForm").reset();
-      setTimeout(() => (window.location.href = "login.html"), 1500);
+      showMessage(messageElement, result.message, "success");
+      setTimeout(() => {
+        localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+        window.location.href = "user-signin.html";
+      }, 1500);
     } else {
-      showMessage(
-        "resetMessage",
-        result.message || "Reset password failed.",
-        "error"
-      );
+      showMessage(messageElement, result.message || "Reset password failed.", "error");
     }
   } catch (error) {
-    showMessage("resetMessage", `Error: ${error.message}`, "error");
+    showMessage(messageElement, `Error: ${error.message}`, "error");
   } finally {
-    hideLoading("resetForm");
+    hideLoading(form);
   }
 }
 
 // ========================
 // HELPER FUNCTIONS
 // ========================
-function showMessage(elementId, message, type) {
-  const element = document.getElementById(elementId);
-  if (element) {
-    element.innerHTML = `<p class="${type}">${message}</p>`;
-  }
+function setupOtpInputs() {
+  const otpInputs = document.querySelectorAll('.otp-field');
+  
+  otpInputs.forEach((input, index) => {
+    // Allow only numeric input
+    input.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+      if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+        otpInputs[index + 1].focus();
+      }
+    });
+    
+    // Handle backspace
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+        otpInputs[index - 1].focus();
+      }
+    });
+  });
 }
 
-function showLoading(formId) {
-  const form = document.getElementById(formId);
-  if (form) {
-    const button = form.querySelector("button[type='submit']");
-    if (button) {
-      button.disabled = true;
-      button.innerHTML = '<span class="spinner"></span> Processing...';
+function setupResendButton() {
+  const resendBtn = document.getElementById("resendCode");
+  const resendMsg = document.getElementById("resendMessage");
+  
+  if (!resendBtn) return;
+
+  // Check if cooldown is active
+  const cooldownEnd = localStorage.getItem(STORAGE_KEYS.RESEND_TIMEOUT);
+  if (cooldownEnd && Date.now() < cooldownEnd) {
+    startResendCooldown(Math.ceil((cooldownEnd - Date.now()) / 1000));
+    return;
+  }
+
+  resendBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    
+    const registerToken = localStorage.getItem(STORAGE_KEYS.OTP_TOKEN);
+    const loginToken = localStorage.getItem(STORAGE_KEYS.LOGIN_TOKEN);
+    const purpose = localStorage.getItem(STORAGE_KEYS.OTP_PURPOSE);
+    const email = localStorage.getItem(STORAGE_KEYS.OTP_EMAIL);
+
+    if (!email) {
+      resendMsg.textContent = "No email found. Please start the process again.";
+      resendMsg.classList.remove("hidden");
+      return;
     }
-  }
-}
 
-function hideLoading(formId) {
-  const form = document.getElementById(formId);
-  if (form) {
-    const button = form.querySelector("button[type='submit']");
-    if (button) {
-      button.disabled = false;
-      button.textContent = button.textContent
-        .replace('<span class="spinner"></span> Processing...', "Submit")
-        .replace("Processing...", "Submit");
+    try {
+      resendBtn.disabled = true;
+      resendMsg.textContent = "Sending new code...";
+      resendMsg.classList.remove("hidden");
+
+      let response;
+      if (registerToken) {
+        response = await fetch(`${baseUrl}/company/register-resend-otp`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: registerToken })
+        });
+      } else if (loginToken) {
+        const endpoint = purpose === "forgot" 
+          ? "/company/forgot-password" 
+          : "/company/login";
+        response = await fetch(`${baseUrl}${endpoint}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        });
+      } else {
+        throw new Error("No active OTP session found");
+      }
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || "Failed to resend OTP");
+
+      resendMsg.textContent = "New verification code sent!";
+      localStorage.setItem(STORAGE_KEYS.RESEND_TIMEOUT, Date.now() + 60000); // 1 minute cooldown
+      startResendCooldown(60);
+    } catch (error) {
+      resendMsg.textContent = error.message;
+      resendBtn.disabled = false;
     }
-  }
+  });
 }
 
-// ========================
-// PAGE ACCESS CHECKS
-// ========================
+function startResendCooldown(seconds) {
+  const resendBtn = document.getElementById("resendCode");
+  if (!resendBtn) return;
+
+  resendBtn.disabled = true;
+  let cooldown = seconds;
+  
+  const timer = setInterval(() => {
+    resendBtn.textContent = `Resend Code (${cooldown}s)`;
+    cooldown--;
+    
+    if (cooldown < 0) {
+      clearInterval(timer);
+      resendBtn.textContent = "Resend Code";
+      resendBtn.disabled = false;
+      localStorage.removeItem(STORAGE_KEYS.RESEND_TIMEOUT);
+    }
+  }, 1000);
+}
+
 function checkOtpPageAccess() {
   const registerToken = localStorage.getItem(STORAGE_KEYS.OTP_TOKEN);
   const loginToken = localStorage.getItem(STORAGE_KEYS.LOGIN_TOKEN);
-
+  const errorElement = document.getElementById("errorMessage");
+  
   if (!registerToken && !loginToken) {
-    showMessage(
-      "otpMessage",
-      "No OTP requested. Please start from registration or login.",
-      "error"
-    );
-    // Redirect to registration after delay
-    setTimeout(() => (window.location.href = "user-signup.html"), 2000);
+    errorElement.textContent = "No OTP requested. Please start from registration or login.";
+    errorElement.classList.remove("hidden");
+    setTimeout(() => window.location.href = "user-signup.html", 3000);
   }
 }
 
 function checkAuthAccess() {
   const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-  if (!token) {
-    showMessage("changeMessage", "Please login first.", "error");
-    // Redirect to login after delay
-    setTimeout(() => (window.location.href = "user-signin.html"), 1500);
+  const messageElement = document.getElementById("changeMessage") || 
+                        document.getElementById("resetMessage");
+  
+  if (!token && messageElement) {
+    showMessage(messageElement, "Please login first.", "error");
+    setTimeout(() => window.location.href = "user-signin.html", 1500);
   }
 }
 
 function checkResetPasswordAccess() {
   const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
   const purpose = localStorage.getItem(STORAGE_KEYS.OTP_PURPOSE);
-
-  if (!token || purpose !== "forgot") {
-    showMessage(
-      "resetMessage",
-      "Please request password reset first.",
-      "error"
-    );
-    // Redirect to forgot password after delay
-    setTimeout(() => (window.location.href = "forgot_password.html"), 1500);
+  const messageElement = document.getElementById("resetMessage");
+  
+  if ((!token || purpose !== "forgot") && messageElement) {
+    showMessage(messageElement, "Please request password reset first.", "error");
+    setTimeout(() => window.location.href = "forgot.html", 1500);
   }
+}
+
+function showMessage(element, message, type) {
+  if (!element) return;
+  element.innerHTML = `<p class="${type}">${message}</p>`;
+  element.classList.remove("hidden");
+}
+
+function showLoading(form) {
+  if (!form) return;
+  const button = form.querySelector("button[type='submit']");
+  if (button) {
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner"></span> Processing...';
+  }
+}
+
+function hideLoading(form) {
+  if (!form) return;
+  const button = form.querySelector("button[type='submit']");
+  if (button) {
+    button.disabled = false;
+    button.textContent = button.textContent
+      .replace('<span class="spinner"></span> Processing...', 'Submit')
+      .replace('Processing...', 'Submit');
+  }
+}
+
+function showSuccessToast(message) {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
+  
+  Toast.fire({
+    icon: 'success',
+    title: message
+  });
 }

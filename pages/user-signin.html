@@ -74,12 +74,12 @@
         or don't have an account? <a href="user-signup.html" class="text-blue-500 hover:underline">Sign up</a>
       </div>
     </form>
-    <div id="loginMessage" class="message"></div>
+    <div id="loginMessage" class="message text-white items-center"></div>
   </div>
 
   <script>
     function togglePassword() {
-      const passwordField = document.getElementById('password');
+      const passwordField = document.getElementById('loginPassword');
       const toggleIcon = document.getElementById('toggleIcon');
       if (passwordField.type === 'password') {
         passwordField.type = 'text';
@@ -91,7 +91,11 @@
         toggleIcon.classList.add('fa-eye');
       }
     }
+  </script>
 
+<script defer src="company-auth.js"></script>
+
+    <!-- <script>
     function selectRole(role) {
       const adminBtn = document.getElementById('adminBtn');
       const branchBtn = document.getElementById('branchBtn');
@@ -223,7 +227,7 @@
       event.preventDefault(); // Prevent default form submission
       showNotification(); // Show notification
     });
-  </script>
+  </script> -->
 
 
 </body>
